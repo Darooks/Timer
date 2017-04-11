@@ -46,11 +46,14 @@
 }
 
 - (IBAction)StartTimer:(id)sender {
+    if (!timerIsInited) {
         _timer = [NSTimer scheduledTimerWithTimeInterval:1.0
                                                   target:self
                                                 selector:@selector(UpdateDisplayView)
                                                 userInfo:nil
                                                  repeats:YES];
+        timerIsInited = true;
+    }
 }
 
 - (IBAction)PauseTimer:(id)sender {
