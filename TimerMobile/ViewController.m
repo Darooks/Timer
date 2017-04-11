@@ -10,7 +10,7 @@
 
 @interface ViewController () {
     NSTimer *_timer;
-    int seconds;
+    double _ticks;
     BOOL timerIsInited;
     BOOL timerIsPaused;
 }
@@ -23,11 +23,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.displayView.text = @"00:00:00";
+    self.displayView.text = @"00:00:00.0";
     timerIsInited = false;
     timerIsPaused = false;
     
-    seconds = 0;
+    _ticks = 0;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -35,19 +35,26 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void) UpdateDisplayView {
-    ++seconds;
-    int secondsToDisplay = seconds % 60;
-    int minutesToDisplay = seconds / 60;
-    int hoursToDisplay = minutesToDisplay / 60;
-    minutesToDisplay %= 60;
+- (NSString *) FormatTime: (NSString *) timeText {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HH:mm:ss.SSS"];
     
-    self.displayView.text = [NSString stringWithFormat:@"%d:%d:%d", hoursToDisplay, minutesToDisplay, secondsToDisplay];
+    return nil;
+}
+
+- (void) UpdateDisplayView {
+    _ticks += 0.1;
+    double seconds = fmod(_ticks, 60.0);
+    double minutes = fmod(trunc(_ticks / 60.0), 60.0);
+    double hours = trunc(_ticks / 3600.0);
+    
+    
+    self.displayView.text = [NSString stringWithFormat:@"%02.0f:%02.0f:%04.1f", hours, minutes, seconds];
 }
 
 - (IBAction)StartTimer:(id)sender {
     if (!timerIsInited) {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:1.0
+        _timer = [NSTimer scheduledTimerWithTimeInterval:0.1
                                                   target:self
                                                 selector:@selector(UpdateDisplayView)
                                                 userInfo:nil
@@ -59,17 +66,14 @@
 - (IBAction)PauseTimer:(id)sender {
     [_timer invalidate];
     timerIsPaused = true;
+    timerIsInited = false;
 }
 
 - (IBAction)ResetTimer:(id)sender {
-    if (timerIsPaused == false) {
-        [_timer invalidate];
-    } else {
-        timerIsPaused = false;
-    }
+    [_timer invalidate];
     
-    seconds = 0;
-    self.displayView.text = @"00:00:00";
+    _ticks = 0.0;
+    self.displayView.text = @"00:00:0.0";
     timerIsInited = false;
 }
 
