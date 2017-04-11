@@ -11,8 +11,7 @@
 @interface ViewController () {
     NSTimer *_timer;
     double _ticks;
-    BOOL timerIsInited;
-    BOOL timerIsPaused;
+    BOOL _timerIsInited;
 }
 
 @end
@@ -24,8 +23,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     self.displayView.text = @"00:00:00.0";
-    timerIsInited = false;
-    timerIsPaused = false;
+    _timerIsInited = false;
     
     _ticks = 0;
 }
@@ -53,20 +51,19 @@
 }
 
 - (IBAction)StartTimer:(id)sender {
-    if (!timerIsInited) {
+    if (!_timerIsInited) {
         _timer = [NSTimer scheduledTimerWithTimeInterval:0.1
                                                   target:self
                                                 selector:@selector(UpdateDisplayView)
                                                 userInfo:nil
                                                  repeats:YES];
-        timerIsInited = true;
+        _timerIsInited = true;
     }
 }
 
 - (IBAction)PauseTimer:(id)sender {
     [_timer invalidate];
-    timerIsPaused = true;
-    timerIsInited = false;
+    _timerIsInited = false;
 }
 
 - (IBAction)ResetTimer:(id)sender {
@@ -74,7 +71,7 @@
     
     _ticks = 0.0;
     self.displayView.text = @"00:00:0.0";
-    timerIsInited = false;
+    _timerIsInited = false;
 }
 
 
